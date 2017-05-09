@@ -1,7 +1,7 @@
 {
-  "name": "yJsonEditor",
+  "name": "y-jsoneditor",
   "authors": [
-    "yJsonEditor Contributors <yjsoneditorcontributors@yahoo-inc.com>",
+    "y-jsoneditor Contributors <yjsoneditorcontributors@yahoo-inc.com>",
     "Jeremy Dorn <jeremy@jeremydorn.com>"
   ],
   "description": "JSON Schema based editor",
