@@ -1,20 +1,24 @@
 {
-  "name": "json-editor",
-  "title": "JSONEditor",
+  "name": "y-jsoneditor",
+  "title": "Y - JSON Editor",
   "description": "JSON Schema based editor",
-  "version": "0.7.28",
+  "version": "0.0.1",
   "main": "dist/jsoneditor.js",
-  "author": {
+  "contributors": [{
+    "name": "Y - JSON Editor Contributors",
+    "email": "yjsoneditorcontributors@yahoo-inc.com"
+  },
+  {
     "name": "Jeremy Dorn",
     "email": "jeremy@jeremydorn.com",
     "url": "http://jeremydorn.com"
-  },
+  }],
   "bugs": {
-    "url": "https://github.com/jdorn/json-editor/issues"
+    "url": "https://github.com/Syzygy24/y-jsoneditor/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jdorn/json-editor.git"
+    "url": "https://github.com/Syzygy24/y-jsoneditor.git"
   },
   "keywords": [
     "json",

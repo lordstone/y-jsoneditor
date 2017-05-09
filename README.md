@@ -1,3 +1,15 @@
+Y - JSON Editor
+===========
+
+Key Differences
+-----------------
+
+### Bug Fixes
+
+Validation errors for arrays not showing up for bootstrap schemas: https://github.com/jdorn/json-editor/pull/641
+
+Y - JSON Editor is a fork of Jeremy Dorn's json-editor with some improvements. The README below is the documentation for json-editor
+
 JSON Editor
 ===========
 

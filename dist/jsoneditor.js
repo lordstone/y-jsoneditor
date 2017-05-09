@@ -6504,7 +6504,28 @@ JSONEditor.defaults.themes.bootstrap2 = JSONEditor.AbstractTheme.extend({
       input.style.marginBottom = 0;
     }
 
+    // Run callbacks that depend on input.controlgroup
+    this._emptyControlgroupWaitQueue(input);
+
     // TODO: use bootstrap slider
+  },
+  // Call callback when input.controlgroup is ready
+  _waitForControlgroup: function(input, callback) {
+    // The wait queue is an array with callbacks that are waiting for
+    // controlgroup
+    input._controlGroupWaitQueue = input._controlGroupWaitQueue || [];
+    input._controlGroupWaitQueue.push(callback);
+
+    // controlgroup may already be ready -- try to empty the queue right away
+    this._emptyControlgroupWaitQueue(input);
+  },
+  // If controlgroup is ready, call all callbacks waiting on it
+  _emptyControlgroupWaitQueue: function(input) {
+    if (input.controlgroup) {
+      $each(input._controlGroupWaitQueue, function(i, callback) {
+        callback(input.controlgroup);
+      });
+    }
   },
   getIndentedPanel: function() {
     var el = document.createElement('div');
@@ -6568,18 +6589,23 @@ JSONEditor.defaults.themes.bootstrap2 = JSONEditor.AbstractTheme.extend({
     return el;
   },
   addInputError: function(input,text) {
-    if(!input.controlgroup || !input.controls) return;
-    input.controlgroup.className += ' error';
-    if(!input.errmsg) {
-      input.errmsg = document.createElement('p');
-      input.errmsg.className = 'help-block errormsg';
-      input.controls.appendChild(input.errmsg);
-    }
-    else {
-      input.errmsg.style.display = '';
-    }
+    // Input errors may be ready before controlgroup is set.  We need to wait
+    // for input.controlgroup.  The caveat is that the UI won't be updated until
+    // after the next invocation of requestAnimationFrame callback
+    this._waitForControlgroup(input, function (controlgroup) {
+      if(!controlgroup || !input.controls) return;
+      controlgroup.className += ' error';
+      if(!input.errmsg) {
+        input.errmsg = document.createElement('p');
+        input.errmsg.className = 'help-block errormsg';
+        input.controls.appendChild(input.errmsg);
+      }
+      else {
+        input.errmsg.style.display = '';
+      }
 
-    input.errmsg.textContent = text;
+      input.errmsg.textContent = text;
+    });
   },
   removeInputError: function(input) {
     if(!input.errmsg) return;
@@ -6658,7 +6684,29 @@ JSONEditor.defaults.themes.bootstrap3 = JSONEditor.AbstractTheme.extend({
       input.controlgroup.style.marginBottom = 0;
     }
 
+    // Run callbacks that depend on input.controlgroup
+    this._emptyControlgroupWaitQueue(input);
+
     // TODO: use bootstrap slider
+  },
+  // Call callback when input.controlgroup is ready
+  _waitForControlgroup: function(input, callback) {
+    // The wait queue is an array with callbacks that are waiting for
+    // controlgroup
+    input._controlGroupWaitQueue = input._controlGroupWaitQueue || [];
+    input._controlGroupWaitQueue.push(callback);
+    
+    // controlgroup may already be ready -- try to empty the queue right away
+    this._emptyControlgroupWaitQueue(input);
+  },
+  // If controlgroup is ready, call all callbacks waiting on it
+  _emptyControlgroupWaitQueue: function(input) {
+    if (input.controlgroup && input._controlGroupWaitQueue) {
+      while (input._controlGroupWaitQueue.length > 0) {
+        var callback = input._controlGroupWaitQueue.shift();
+        callback(input.controlgroup);
+      }
+    }
   },
   getTextareaInput: function() {
     var el = document.createElement('textarea');
@@ -6735,20 +6783,22 @@ JSONEditor.defaults.themes.bootstrap3 = JSONEditor.AbstractTheme.extend({
     el.style.maxWidth = 'none';
     return el;
   },
-
   addInputError: function(input,text) {
-    if(!input.controlgroup) return;
-    input.controlgroup.className += ' has-error';
-    if(!input.errmsg) {
-      input.errmsg = document.createElement('p');
-      input.errmsg.className = 'help-block errormsg';
-      input.controlgroup.appendChild(input.errmsg);
-    }
-    else {
-      input.errmsg.style.display = '';
-    }
+    // Input errors may be ready before controlgroup is set.  We need to wait
+    // for input.controlgroup.  The caveat is that the UI won't be updated until
+    // after the next invocation of requestAnimationFrame callback
+    this._waitForControlgroup(input, function (controlgroup) {
+      controlgroup.className += ' has-error';
+      if(!input.errmsg) {
+        input.errmsg = document.createElement('p');
+        input.errmsg.className = 'help-block errormsg';
+        controlgroup.appendChild(input.errmsg);
+      } else {
+        input.errmsg.style.display = '';
+      }
 
-    input.errmsg.textContent = text;
+      input.errmsg.textContent = text;
+    });
   },
   removeInputError: function(input) {
     if(!input.errmsg) return;
