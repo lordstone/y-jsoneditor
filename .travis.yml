@@ -1,3 +1,17 @@
 language: node_js
 node_js:
-  - "6"
+- '6'
+deploy:
+  provider: npm
+  email: syzgit@gmail.com
+  api_key:
+    secure: F+IZiyMyP+LQVLc87Zu+dyR054p8IJt9BJxga08XF+CUWscOM9rH5g/9PX2Er8F5aPENzaFnSc5yTADxG+wUFjt2L0XOUJZuryE9GqQZ3drjGB3xQH0//vDB3829uk/w9PmSnI4DbHyhOytQwU+IWgEdqwt4LrS/F56cF6fZfyzzGZGDyMAmMYbwD8ac8+EP063yT1APkVfOMnjGOHvV345A3h1wcSK7baSFU3FG4MhdVU/2HkQe3qvegCtpkn1GmhwkJkS+NMmZO8dLtQbA8H0AYOCIfpENjRXUz8MopqPaxPfZPZxMk+4tUkGuYzPJOE3PnPNuWdxA3vWKIIUHPSgtEVx8tZRTU3cfz7kQ2TxLGFXf/YDneI0+A2W0G8Pn1HZxB5FUJd4MR7wtNm8iwHygugadNWoHWYawQK21McQkklKvFHJS0vERn3v1VVuZQ/fs7OBeaoMegLlkLS4VoVBXQnJnvyTYthh4eapmc4GLP3eN9wxlwn8/Fwkdd2v1KJ93iJB9N04TJW+LXsduz27UxJljGy+i3sNkPasuf9sx/j7ciQegSErP9+rE/hFL/SajNPLRVbEzmzxQ0cT4Q/y8jufJS2jkdMxVrwHyfCY2Br//9GH4XSbo4ub+ohTPqQEakPh2GX24imLNtzGdic3C5AXx7P7jla7hewqs6Aw=
+  on:
+    tags: true
+    repo: Syzygy24/y-jsoneditor
+notifications:
+  email:
+    recipients:
+      - "yjsoneditorcontributors@yahoo-inc.com"
+    on_success: change
+    on_failure: always
