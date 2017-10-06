@@ -158,6 +158,10 @@ JSONEditor.AbstractTheme = Class.extend({
     el.setAttribute('step',step);
     return el;
   },
+  getDateTimeInput: function() {
+    var el = this.getFormInputField('datetime-local');
+    return el;
+  },
   getFormInputField: function(type) {
     var el = document.createElement('input');
     el.setAttribute('type',type);
