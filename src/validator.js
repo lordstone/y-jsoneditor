@@ -323,12 +323,10 @@ JSONEditor.Validator = Class.extend({
         }
       }
 
-      /*
       // `date-time`
       if(schema.format === 'date-time') {
         // TODO: verify this regex
-        var datetime_regex = '^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$';
-        if(!(new RegExp(datetime_regex)).test(value)) {
+        if(isNaN(Date.parse(value))) {
           errors.push({
             path: path,
             property: 'pattern',
@@ -336,7 +334,6 @@ JSONEditor.Validator = Class.extend({
           });
         }
       }
-      */
     }
     // Array specific validation
     else if(typeof value === "object" && value !== null && Array.isArray(value)) {

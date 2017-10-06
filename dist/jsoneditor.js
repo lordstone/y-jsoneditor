@@ -1133,12 +1133,10 @@ JSONEditor.Validator = Class.extend({
         }
       }
 
-      /*
       // `date-time`
       if(schema.format === 'date-time') {
         // TODO: verify this regex
-        var datetime_regex = '^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$';
-        if(!(new RegExp(datetime_regex)).test(value)) {
+        if (isNaN(Date.parse(value))) {
           errors.push({
             path: path,
             property: 'pattern',
@@ -1146,7 +1144,6 @@ JSONEditor.Validator = Class.extend({
           });
         }
       }
-      */
     }
     // Array specific validation
     else if(typeof value === "object" && value !== null && Array.isArray(value)) {
@@ -1894,8 +1891,45 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
     if(!this.input) return;
     this.input.removeAttribute('name');
   },
+  getValue: function() {
+    if(this.format === 'date-time') {
+      // deal with timezone and all date-time issues
+      var inputStr = this.input.value;
+      var datetimeStr = inputStr.substr(0, 4) + // years
+        '-' + inputStr.substr(5, 2) + // months
+        '-' + inputStr.substr(8, 2) + // days
+        'T' + inputStr.substr(11, 2) + // hours
+        ':' + inputStr.substr(14, 2) + // minutes
+        ':' + this.datetimeInfo.date.getSeconds() + // seconds
+        '.' + this.datetimeInfo.date.getMilliseconds() + //secfrac
+        this.datetimeInfo.timezone;
+      return datetimeStr;
+    }else{
+      return this._super();
+    }
+  },
   setValue: function(value,initial,from_template) {
     var self = this;
+
+    if(this.format === 'date-time') {
+      // deal with timezone and all date-time issues
+      value = value.trim();
+      var timezoneInfo = '';
+      if (value.substr(value.length-1) === 'Z') {
+        timezoneInfo = value.substr(value.length-1);
+      } else if (value.substr(value.length-6) === '+' ||
+        value.substr(value.length-6) === '-') {
+        timezoneInfo = value.substr(value.length-6);
+      }
+
+      var date = new Date(value);
+      this.input.value = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + '-' + 'T' + date.getHours() + ':' + date.getMinutes();
+      this.datetimeInfo = {
+        date: date,
+        timezone: timezoneInfo
+      };
+      return;
+    }
 
     if(this.template && !from_template) {
       return;
