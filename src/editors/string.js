@@ -41,9 +41,7 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       }
 
       var date = new Date(value);
-      this.input.value = date.getFullYear() + '-'
-        + date.getMonth() + '-' + date.getDay() + '-'
-        + 'T' + date.getHours() + ':' + date.getMinutes();
+      this.input.value = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + '-' + 'T' + date.getHours() + ':' + date.getMinutes();
       this.datetimeInfo = {
         date: date,
         timezone: timezoneInfo
