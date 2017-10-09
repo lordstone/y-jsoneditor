@@ -176,13 +176,18 @@ editor.on("change",  function() {
                     type: "string",
                     description: "First and Last name",
                     minLength: 4,
-                    default: "Jeremy Dorn"
+                    default: "Jeremy Dorn II"
                 },
                 age: {
                     type: "integer",
                     default: 25,
                     minimum: 18,
                     maximum: 99
+                },
+                birthday: {
+                    type: "string",
+                    format: "date-time",
+                    default: "2017-10-01T19:10"
                 },
                 favorite_color: {
                     type: "string",

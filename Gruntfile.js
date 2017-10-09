@@ -61,6 +61,9 @@ module.exports = function(grunt) {
 
           // End the closure
           'src/outro.js'
+
+          // bootstrap-datetime-picker
+          //'node_modules/bootstrap-datetime-picker/js/bootstrap-datetimepicker.min.js'
         ],
       }
     },
@@ -120,6 +123,9 @@ module.exports = function(grunt) {
 
         // Wrapper for $.fn style initialization
         'src/jquery.js'
+
+        // bootstrap-datetime-picker
+        //'node_modules/bootstrap-datetime-picker/js/bootstrap-datetimepicker.min.js'
       ],
       afterconcat: {
         options: {

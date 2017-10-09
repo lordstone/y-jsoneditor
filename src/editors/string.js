@@ -13,15 +13,25 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
     if(this.format === 'date-time') {
       // deal with timezone and all date-time issues
       var inputStr = this.input.value;
-      var datetimeStr = inputStr.substr(0, 4) + // years
-        '-' + inputStr.substr(5, 2) + // months
-        '-' + inputStr.substr(8, 2) + // days
-        'T' + inputStr.substr(11, 2) + // hours
-        ':' + inputStr.substr(14, 2) + // minutes
-        ':' + this.datetimeInfo.date.getSeconds() + // seconds
-        '.' + this.datetimeInfo.date.getMilliseconds() + //secfrac
-        this.datetimeInfo.timezone;
-      return datetimeStr;
+      var fillInTheRest = function (content, digits) {
+        digits = digits | 2;
+        var dStr = content.toString();
+        while (dStr.length < digits) dStr = '0' + dStr;
+        return dStr;
+      };
+
+      var datetimeObj;
+      if (!inputStr || inputStr.length === 0){
+        datetimeObj = new Date();
+      } else {
+        datetimeObj = new Date(inputStr +
+          ':' + fillInTheRest(this.datetimeInfo.date.getSeconds() | 0) + // seconds
+          '.' + fillInTheRest(this.datetimeInfo.date.getMilliseconds() | 0, 3) + //secfrac
+          this.datetimeInfo.timezone);
+      }
+
+      // RFC3339 compliant:
+      return datetimeObj.toISOString();
     }else{
       return this._super();
     }
@@ -31,6 +41,9 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
 
     if(this.format === 'date-time') {
       // deal with timezone and all date-time issues
+      if (!value){
+        return;
+      }
       value = value.trim();
       var timezoneInfo = '';
       if (value.substr(value.length-1) === 'Z') {
@@ -41,7 +54,12 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       }
 
       var date = new Date(value);
-      this.input.value = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + '-' + 'T' + date.getHours() + ':' + date.getMinutes();
+      var doublefy = function (digits) {
+        var goodStr = '' + digits.toString();
+        return goodStr.length < 2 ? ('0' + goodStr) : goodStr;
+      };
+
+      this.input.value = date.getFullYear() + '-' + doublefy(date.getMonth()+1) + '-' + doublefy(date.getDate()) + 'T' + doublefy(date.getHours()) + ':' + doublefy(date.getMinutes());
       this.datetimeInfo = {
         date: date,
         timezone: timezoneInfo
@@ -142,6 +160,10 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       else if(this.format === 'date-time') {
         this.input_type = 'datetime-local';
         this.input = this.theme.getDateTimeInput();
+        this.datetimeInfo = {
+          date: new Date(),
+          timezone: ''
+        };
       }
       // Source Code
       else if([
