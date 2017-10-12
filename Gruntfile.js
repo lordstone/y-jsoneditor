@@ -2,12 +2,25 @@
 
 module.exports = function(grunt) {
   grunt.initConfig({
+    bower: {
+      install: {
+
+      }
+    },
+    bower_concat: {
+      dist: {
+        dest: {
+          js: 'dist/_bower.js',
+          css: 'dist/_bower.css'
+        }
+      }
+    },
     concat: {
       options: {
         sourceMap: true
       },
-      dist: {
-        dest: 'dist/jsoneditor.js',
+      standalone: {
+        dest: 'dist/standalone-jsoneditor.js',
         src: [
           // License & version info, start the containing closure
           'src/intro.js',
@@ -61,10 +74,14 @@ module.exports = function(grunt) {
 
           // End the closure
           'src/outro.js'
-
-          // bootstrap-datetime-picker
-          //'node_modules/bootstrap-datetime-picker/js/bootstrap-datetimepicker.min.js'
+        ]
+      },
+      dist: {
+        src: [
+          'dist/_bower.js',
+          'dist/standalone-jsoneditor.js'
         ],
+        dest: 'dist/jsoneditor.js'
       }
     },
     uglify: {
@@ -123,16 +140,13 @@ module.exports = function(grunt) {
 
         // Wrapper for $.fn style initialization
         'src/jquery.js'
-
-        // bootstrap-datetime-picker
-        //'node_modules/bootstrap-datetime-picker/js/bootstrap-datetimepicker.min.js'
       ],
       afterconcat: {
         options: {
           undef: true
         },
         files: {
-          src: ['dist/jsoneditor.js']
+          src: ['dist/standalone-jsoneditor.js']
         }
       }
     }
@@ -144,7 +158,17 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
-  // Default task.
-  grunt.registerTask('default', ['jshint:beforeconcat','concat','jshint:afterconcat','uglify']);
+  grunt.loadNpmTasks('grunt-bower-task');
+  grunt.loadNpmTasks('grunt-bower-concat');
 
+  // Default task.
+  grunt.registerTask('default', [
+    'bower:install',
+    'jshint:beforeconcat',
+    'concat:standalone',
+    'jshint:afterconcat',
+    'bower_concat',
+    'concat:dist',
+    'uglify'
+  ]);
 };
