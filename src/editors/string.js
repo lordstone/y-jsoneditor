@@ -1,3 +1,14 @@
+var makeId = function (len) {
+  len = len | 10;
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < len; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+};
+
 JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
   register: function() {
     this._super();
@@ -12,7 +23,8 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
   getValue: function() {
     if(this.format === 'date-time') {
       // deal with timezone and all date-time issues
-      var inputStr = this.input.value;
+      // NOTE: This should be the same for both jQuery and html5 based datetime-pickers
+      var inputStr = this.input.value.trim().replace(' ', 'T');
       var fillInTheRest = function (content, digits) {
         digits = digits | 2;
         var dStr = content.toString();
@@ -20,18 +32,15 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
         return dStr;
       };
 
-      var datetimeObj;
       if (!inputStr || inputStr.length === 0){
-        datetimeObj = new Date();
+        return new Date().toISOString();
       } else {
-        datetimeObj = new Date(inputStr +
+        // RFC3339 compliant:
+        return inputStr +
           ':' + fillInTheRest(this.datetimeInfo.date.getSeconds() | 0) + // seconds
           '.' + fillInTheRest(this.datetimeInfo.date.getMilliseconds() | 0, 3) + //secfrac
-          this.datetimeInfo.timezone);
+          this.datetimeInfo.timezone;
       }
-
-      // RFC3339 compliant:
-      return datetimeObj.toISOString();
     }else{
       return this._super();
     }
@@ -48,22 +57,38 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       var timezoneInfo = '';
       if (value.substr(value.length-1) === 'Z') {
         timezoneInfo = value.substr(value.length-1);
-      } else if (value.substr(value.length-6) === '+' ||
-        value.substr(value.length-6) === '-') {
+      } else if (value.substr(value.length-6,1) === '+' ||
+        value.substr(value.length-6,1) === '-') {
         timezoneInfo = value.substr(value.length-6);
       }
-
       var date = new Date(value);
       var doublefy = function (digits) {
         var goodStr = '' + digits.toString();
         return goodStr.length < 2 ? ('0' + goodStr) : goodStr;
       };
-
-      this.input.value = date.getFullYear() + '-' + doublefy(date.getMonth()+1) + '-' + doublefy(date.getDate()) + 'T' + doublefy(date.getHours()) + ':' + doublefy(date.getMinutes());
+      var datetimeStr = date.getFullYear() + '-' + doublefy(date.getMonth()+1) + '-' + doublefy(date.getDate()) + 'T' + doublefy(date.getHours()) + ':' + doublefy(date.getMinutes());
       this.datetimeInfo = {
         date: date,
         timezone: timezoneInfo
       };
+      this.input.value = datetimeStr;
+      if (window.jQuery) {
+        window.jQuery('#' + this.input_id).datetimepicker().on('changeDate', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Don't allow changing if this field is a template
+          if (self.schema.template) {
+            this.value = self.value;
+            return;
+          }
+          self.is_dirty = true;
+
+          self.refreshValue();
+          self.onChange(true);
+        });
+        window.jQuery('#' + this.input_id).datetimepicker('update', date);
+      }
       return;
     }
 
@@ -158,8 +183,16 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       }
       // Datetime Input
       else if(this.format === 'date-time') {
-        this.input_type = 'datetime-local';
-        this.input = this.theme.getDateTimeInput();
+        if (window.jQuery) {
+          var inputId = 'datetime-' + makeId();
+          this.input_type = 'text';
+          this.input_id = inputId;
+          this.input = this.theme.getDateTimeInputJQuery(inputId);
+
+          window.jQuery('#' + inputId).datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+        } else {
+          this.input = this.theme.getDateTimeInputHtml5();
+        }
         this.datetimeInfo = {
           date: new Date(),
           timezone: ''

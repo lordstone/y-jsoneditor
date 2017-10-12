@@ -163,10 +163,10 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', [
-    'bower:install',
     'jshint:beforeconcat',
     'concat:standalone',
     'jshint:afterconcat',
+    'bower:install',
     'bower_concat',
     'concat:dist',
     'uglify'
