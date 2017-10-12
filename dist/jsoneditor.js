@@ -1940,39 +1940,24 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       var timezoneInfo = '';
       if (value.substr(value.length-1) === 'Z') {
         timezoneInfo = value.substr(value.length-1);
+        value = value.substr(0, value.length-1);
       } else if (value.substr(value.length-6,1) === '+' ||
         value.substr(value.length-6,1) === '-') {
         timezoneInfo = value.substr(value.length-6);
+        value = value.substr(0, value.length-6);
       }
-      window.console.log('timezoneInfo str:' + timezoneInfo);
       var date = new Date(value);
       var doublefy = function (digits) {
-        var goodStr = '' + digits.toString();
-        return goodStr.length < 2 ? ('0' + goodStr) : goodStr;
+        var res = '' + digits.toString();
+        return res.length < 2 ? ('0' + res) : res;
       };
-      var datetimeStr = date.getFullYear() + '-' + doublefy(date.getMonth()+1) + '-' + doublefy(date.getDate()) + 'T' + doublefy(date.getHours()) + ':' + doublefy(date.getMinutes());
+      var datetimeStr = date.getFullYear() + '-' + doublefy(date.getMonth()+1) + '-' + doublefy(date.getDate()) + ' ' + doublefy(date.getHours()) + ':' + doublefy(date.getMinutes());
       this.datetimeInfo = {
         date: date,
         timezone: timezoneInfo
       };
+      window.console.log('dateStr:' + value);
       this.input.value = datetimeStr;
-      if (window.jQuery) {
-        window.jQuery('#' + this.input_id).datetimepicker().on('changeDate', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          // Don't allow changing if this field is a template
-          if (self.schema.template) {
-            this.value = self.value;
-            return;
-          }
-          self.is_dirty = true;
-
-          self.refreshValue();
-          self.onChange(true);
-        });
-        window.jQuery('#' + this.input_id).datetimepicker('update', date);
-      }
       return;
     }
 
@@ -2072,7 +2057,6 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
           this.input_type = 'text';
           this.input_id = inputId;
           this.input = this.theme.getDateTimeInputJQuery(inputId);
-
           window.jQuery('#' + inputId).datetimepicker({format: 'yyyy-mm-dd hh:ii'});
         } else {
           this.input = this.theme.getDateTimeInputHtml5();
@@ -2268,6 +2252,26 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
   },
   afterInputReady: function() {
     var self = this, options;
+
+    if(this.format && this.format === 'date-time') {
+      if (window.jQuery) {
+        window.jQuery('#' + this.input_id).datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+        window.jQuery('#' + this.input_id).datetimepicker().on('changeDate', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Don't allow changing if this field is a template
+          if (self.schema.template) {
+            this.value = self.value;
+            return;
+          }
+          self.is_dirty = true;
+
+          self.refreshValue();
+          self.onChange(true);
+        });
+      }
+    }
 
     // Code editor
     if(this.source_code) {

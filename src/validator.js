@@ -325,7 +325,6 @@ JSONEditor.Validator = Class.extend({
 
       // `date-time`
       if(schema.format === 'date-time') {
-        // TODO: verify this regex
         if(isNaN(Date.parse(value))) {
           errors.push({
             path: path,
