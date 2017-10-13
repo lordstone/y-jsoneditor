@@ -9,6 +9,19 @@ var makeId = function (len) {
   return text;
 };
 
+var flipSign = function (s) {
+  if (s === '+') return '-';
+  else if (s === '-') return '+';
+  else return '';
+};
+
+var fillInTheRest = function (content, digits) {
+  if(!digits) digits = 2;
+  var dStr = content.toString().trim();
+  while (dStr.length < digits) dStr = '0' + dStr;
+  return dStr;
+};
+
 JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
   register: function() {
     this._super();
@@ -25,21 +38,15 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
       // deal with timezone and all date-time issues
       // NOTE: This should be the same for both jQuery and html5 based datetime-pickers
       var inputStr = this.input.value.trim().replace(' ', 'T');
-      var fillInTheRest = function (content, digits) {
-        digits = digits | 2;
-        var dStr = content.toString();
-        while (dStr.length < digits) dStr = '0' + dStr;
-        return dStr;
-      };
-
       if (!inputStr || inputStr.length === 0){
         return new Date().toISOString();
       } else {
         // RFC3339 compliant:
-        return inputStr +
-          ':' + fillInTheRest(this.datetimeInfo.date.getSeconds() | 0) + // seconds
-          '.' + fillInTheRest(this.datetimeInfo.date.getMilliseconds() | 0, 3) + //secfrac
-          this.datetimeInfo.timezone;
+        var rawDate = new Date(new Date(inputStr +
+          ':' + fillInTheRest(this.datetimeInfo.date.getSeconds()) + // seconds
+          '.' + fillInTheRest(this.datetimeInfo.date.getMilliseconds(), 3))); //secfrac
+        var refinedDate = new Date(rawDate.getTime()); // - rawDate.getTimezoneOffset() * 60000);
+        return refinedDate.toISOString();
       }
     }else{
       return this._super();
@@ -54,24 +61,10 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
         return;
       }
       value = value.trim();
-      var timezoneInfo = '';
-      if (value.substr(value.length-1) === 'Z') {
-        timezoneInfo = value.substr(value.length-1);
-        value = value.substr(0, value.length-1);
-      } else if (value.substr(value.length-6,1) === '+' ||
-        value.substr(value.length-6,1) === '-') {
-        timezoneInfo = value.substr(value.length-6);
-        value = value.substr(0, value.length-6);
-      }
       var date = new Date(value);
-      var doublefy = function (digits) {
-        var res = '' + digits.toString();
-        return res.length < 2 ? ('0' + res) : res;
-      };
-      var datetimeStr = date.getFullYear() + '-' + doublefy(date.getMonth()+1) + '-' + doublefy(date.getDate()) + ' ' + doublefy(date.getHours()) + ':' + doublefy(date.getMinutes());
+      var datetimeStr = (date.getFullYear() + '-' + fillInTheRest(date.getMonth()+1) + '-' + fillInTheRest(date.getDate()) + ' ' + fillInTheRest(date.getHours()) + ':' + fillInTheRest(date.getMinutes()));
       this.datetimeInfo = {
-        date: date,
-        timezone: timezoneInfo
+        date: date
       };
       this.input.value = datetimeStr;
       return;
