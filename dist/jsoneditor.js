@@ -2856,6 +2856,8 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
     try {
       var json = JSON.parse(this.editjson_textarea.value);
       this.setValue(json);
+      this.refreshValue();
+      this.onChange(true);
       this.hideEditJSON();
     }
     catch(e) {
