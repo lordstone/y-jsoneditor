@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Unit Test for y-json editor</title>
+
+    <!-- placeholders for the theme switcher -->
+    <link rel='stylesheet' id='theme_stylesheet'>
+    <link rel='stylesheet' id='icon_stylesheet'>
+
+    <style>[class*="foundicon-"] {font-family: GeneralFoundicons;font-style: normal;}</style>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+
+</head>
+<body>
+    <!-- add jQuery only for tests -->
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+
+    <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
+
+    <script src='../src/class.js'></script>
+    <script src="unit/class.js"></script>
+
+    <script src='../src/core.js'></script>
+    <script src="unit/core.js"></script>
+
+    <div class='container'>
+      <div id="qunit"></div>
+      <div id="qunit-fixture"></div>
+    </div>
+</body>
+</html>
