@@ -3163,7 +3163,7 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       if(!this.editors.hasOwnProperty(i)) continue;
       this.value[i] = this.editors[i].getValue();
     }
-    
+
     if(this.adding_property) this.refreshAddProperties();
   },
   refreshAddProperties: function() {
@@ -3270,7 +3270,7 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
 
       // Otherwise, remove value unless this is the initial set or it's required
       else if(!initial && !self.isRequired(editor)) {
-        editor.setValue(editor.getDefault(),initial);
+        editor.setValue(editor.getDefault(), initial, true);
       }
 
       // Otherwise, set the value to the default
@@ -3287,7 +3287,7 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
     });
     this.refreshValue();
     this.layoutEditors();
-    this.onChange(true);
+    this.onChange();
   },
   showValidationErrors: function(errors) {
     var self = this;
