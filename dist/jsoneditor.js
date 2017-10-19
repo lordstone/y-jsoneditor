@@ -1430,7 +1430,7 @@ JSONEditor.AbstractEditor = Class.extend({
 
     // disable editing properties by button properties
     this.options.disable_properties = true;
-      
+
     if(!options.path && !this.schema.id) this.schema.id = 'root';
     this.path = options.path || 'root';
     this.formname = options.formname || this.path.replace(/\.([^.]+)/g,'[$1]');
@@ -1767,23 +1767,6 @@ JSONEditor.AbstractEditor = Class.extend({
       if(type === "array") return [];
     }
     
-    return null;
-  },
-  getEmpty: function() { // need careful discussion
-    var type = this.schema.type || this.schema.oneOf;
-    if(type && Array.isArray(type)) type = type[0];
-    if(type && typeof type === "object") type = type.type;
-    if(type && Array.isArray(type)) type = type[0];
-
-    if(typeof type === "string") {
-      if(type === "number") return NaN;
-      if(type === "boolean") return false;
-      if(type === "integer") return NaN;
-      if(type === "string") return "";
-      if(type === "object") return {};
-      if(type === "array") return [];
-    }
-
     return null;
   },
   getTitle: function() {
@@ -2362,9 +2345,6 @@ JSONEditor.defaults.editors.integer = JSONEditor.defaults.editors.number.extend(
 JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
   getDefault: function() {
     return $extend({},this.schema["default"] || {});
-  },
-  getEmpty: function() {
-    return {};
   },
   getChildEditors: function() {
     return this.editors;
@@ -3183,8 +3163,7 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
 
       // Otherwise, remove value unless this is the initial set or it's required
       else if(!initial && !self.isRequired(editor)) {
-        editor.setValue(editor.getEmpty(),initial);
-        //self.removeObjectProperty(i);
+        editor.setValue(editor.getDefault(),initial);
       }
 
       // Otherwise, set the value to the default
@@ -3193,33 +3172,15 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       }
     });
 
-    window.console.log('value:' + JSON.stringify(value, null, 4));
-    window.console.log('schemaProperties:' + JSON.stringify(this.schema.properties, null, 4));
-
     $each(value, function(i,val) {
       if(!self.cached_editors[i]) {
         self.addObjectProperty(i);
         if(self.editors[i]) self.editors[i].setValue(val,initial);
       }
     });
-/*
-    $each(this.schema.properties, function(i,prop) {
-      if(!self.cached_editors[i]) {
-        if (value[i]){
-          self.addObjectProperty(i);
-          if(self.editors[i]) self.editors[i].setValue(value[i],initial);
-        } else {
-          window.console.log('try adding:' + i);
-        }
-      }
-    });
-*/
-
-    // something that add the missing schema properties
-
     this.refreshValue();
     this.layoutEditors();
-    this.onChange();
+    this.onChange(true);
   },
   showValidationErrors: function(errors) {
     var self = this;
@@ -3272,9 +3233,6 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
 JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
   getDefault: function() {
     return this.schema["default"] || [];
-  },
-  getEmpty: function() {
-    return [];
   },
   register: function() {
     this._super();

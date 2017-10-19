@@ -383,23 +383,6 @@ JSONEditor.AbstractEditor = Class.extend({
     
     return null;
   },
-  getEmpty: function() { // need careful discussion
-    var type = this.schema.type || this.schema.oneOf;
-    if(type && Array.isArray(type)) type = type[0];
-    if(type && typeof type === "object") type = type.type;
-    if(type && Array.isArray(type)) type = type[0];
-
-    if(typeof type === "string") {
-      if(type === "number") return NaN;
-      if(type === "boolean") return false;
-      if(type === "integer") return NaN;
-      if(type === "string") return "";
-      if(type === "object") return {};
-      if(type === "array") return [];
-    }
-
-    return null;
-  },
   getTitle: function() {
     return this.schema.title || this.key;
   },

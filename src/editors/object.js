@@ -2,9 +2,6 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
   getDefault: function() {
     return $extend({},this.schema["default"] || {});
   },
-  getEmpty: function() {
-    return {};
-  },
   getChildEditors: function() {
     return this.editors;
   },
@@ -822,8 +819,7 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
 
       // Otherwise, remove value unless this is the initial set or it's required
       else if(!initial && !self.isRequired(editor)) {
-        editor.setValue(editor.getEmpty(),initial);
-        //self.removeObjectProperty(i);
+        editor.setValue(editor.getDefault(),initial);
       }
 
       // Otherwise, set the value to the default
@@ -832,33 +828,15 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       }
     });
 
-    window.console.log('value:' + JSON.stringify(value, null, 4));
-    window.console.log('schemaProperties:' + JSON.stringify(this.schema.properties, null, 4));
-
     $each(value, function(i,val) {
       if(!self.cached_editors[i]) {
         self.addObjectProperty(i);
         if(self.editors[i]) self.editors[i].setValue(val,initial);
       }
     });
-/*
-    $each(this.schema.properties, function(i,prop) {
-      if(!self.cached_editors[i]) {
-        if (value[i]){
-          self.addObjectProperty(i);
-          if(self.editors[i]) self.editors[i].setValue(value[i],initial);
-        } else {
-          window.console.log('try adding:' + i);
-        }
-      }
-    });
-*/
-
-    // something that add the missing schema properties
-
     this.refreshValue();
     this.layoutEditors();
-    this.onChange();
+    this.onChange(true);
   },
   showValidationErrors: function(errors) {
     var self = this;
