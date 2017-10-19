@@ -8,9 +8,13 @@
     <link rel='stylesheet' id='theme_stylesheet'>
     <link rel='stylesheet' id='icon_stylesheet'>
 
+    <!-- add jQuery only for tests -->
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+
+
     <style>[class*="foundicon-"] {font-family: GeneralFoundicons;font-style: normal;}</style>
     <script src='dist/jsoneditor.js'></script>
-
+    <link rel="stylesheet" href='dist/_bower.css'>
     <script>
     /**
      * LZString compression library
@@ -176,13 +180,18 @@ editor.on("change",  function() {
                     type: "string",
                     description: "First and Last name",
                     minLength: 4,
-                    default: "Jeremy Dorn"
+                    default: "Jeremy Dorn II"
                 },
                 age: {
                     type: "integer",
                     default: 25,
                     minimum: 18,
                     maximum: 99
+                },
+                birthday: {
+                    type: "string",
+                    format: "date-time",
+                    default: "2017-10-01T19:10:00.000Z"
                 },
                 favorite_color: {
                     type: "string",
