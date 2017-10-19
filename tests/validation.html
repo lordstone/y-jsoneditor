@@ -11,6 +11,33 @@
   <div id='output'></div>
 <script>
     var tests = {
+        datetime: {
+            schema: {
+                type: "object",
+                properties: {
+                    dt: {
+                        type: "string",
+                        format: "date-time"
+                    }
+                }
+            },
+            valid: [
+                {
+                    dt: "2002-10-02T15:00:00.05Z"
+                },
+                {
+                    dt: "2002-10-02T10:00:00-05:00"
+                }
+            ],
+            invalid: [
+                {
+                    dt: "qweqwie"
+                },
+                {
+                    dt: "2010-29"
+                }
+            ]
+        },
         required3: {
             schema: {
                 type: "object",

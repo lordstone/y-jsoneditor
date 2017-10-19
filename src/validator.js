@@ -322,6 +322,17 @@ JSONEditor.Validator = Class.extend({
           });
         }
       }
+
+      // `date-time`
+      if(schema.format === 'date-time') {
+        if(isNaN(Date.parse(value))) {
+          errors.push({
+            path: path,
+            property: 'pattern',
+            message: this.translate('error_datetime')
+          });
+        }
+      }
     }
     // Array specific validation
     else if(typeof value === "object" && value !== null && Array.isArray(value)) {
