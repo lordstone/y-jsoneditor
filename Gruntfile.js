@@ -13,14 +13,14 @@ module.exports = function(grunt) {
           'src/intro.js',
 
           // Simple inheritance
-          'src/class-test.js',
+          'src/class.js',
           // IE9 polyfills
           'src/ie9.js',
           // Utils like extend, each, and trigger
           'src/utilities.js',
 
           // The main JSONEditor class
-          'src/core-test.js',
+          'src/core.js',
 
           // JSON Schema validator
           'src/validator.js',
@@ -90,14 +90,14 @@ module.exports = function(grunt) {
         latedef: true
       },
       beforeconcat: [
-        'src/class-test.js',
+        'src/class.js',
         'src/ie9.js',
 
         // Utils like extend, each, and trigger
         'src/utilities.js',
 
         // The main JSONEditor class
-        'src/core-test.js',
+        'src/core.js',
 
         // JSON Schema validator
         'src/validator.js',
