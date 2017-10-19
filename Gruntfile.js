@@ -11,7 +11,7 @@ module.exports = function(grunt) {
       dist: {
         dest: {
           js: 'dist/_bower.js',
-          css: 'dist/_bower.css'
+          css: 'dist/jsoneditor_datetimepicker.css'
         }
       }
     },
