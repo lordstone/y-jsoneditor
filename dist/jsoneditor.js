@@ -6386,6 +6386,7 @@ JSONEditor.AbstractTheme = Class.extend({
     var el = this.getFormInputField('text');
     el.setAttribute('id', inputId);
     el.setAttribute('class', 'datetimepicker form-control');
+    el.style.padding = '6px 12px';
     return el;
   },
   getDateTimeInputHtml5: function() {
