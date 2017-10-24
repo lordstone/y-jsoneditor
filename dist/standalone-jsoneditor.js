@@ -6384,7 +6384,7 @@ JSONEditor.AbstractTheme = Class.extend({
     // if jQuery exists, use jQuery-based datetime-picker
     var el = this.getFormInputField('text');
     el.setAttribute('id', inputId);
-    el.setAttribute('class', 'datetimepicker');
+    el.setAttribute('class', 'datetimepicker form-control');
     return el;
   },
   getDateTimeInputHtml5: function() {
