@@ -515,6 +515,8 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
     try {
       var json = JSON.parse(this.editjson_textarea.value);
       this.setValue(json);
+      this.refreshValue();
+      this.onChange(true);
       this.hideEditJSON();
     }
     catch(e) {
@@ -712,7 +714,7 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       if(!this.editors.hasOwnProperty(i)) continue;
       this.value[i] = this.editors[i].getValue();
     }
-    
+
     if(this.adding_property) this.refreshAddProperties();
   },
   refreshAddProperties: function() {
@@ -816,10 +818,12 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
         self.addObjectProperty(i);
         editor.setValue(value[i],initial);
       }
+
       // Otherwise, remove value unless this is the initial set or it's required
       else if(!initial && !self.isRequired(editor)) {
-        self.removeObjectProperty(i);
+        editor.setValue(editor.getDefault(), initial, true);
       }
+
       // Otherwise, set the value to the default
       else {
         editor.setValue(editor.getDefault(),initial);
@@ -832,7 +836,6 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
         if(self.editors[i]) self.editors[i].setValue(val,initial);
       }
     });
-
     this.refreshValue();
     this.layoutEditors();
     this.onChange();
